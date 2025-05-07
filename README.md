@@ -1,2 +1,1 @@
-# python_django_stock
-Show the stock prices in different ways
+#An application under the web framework Django + Gunicorn + Docker
