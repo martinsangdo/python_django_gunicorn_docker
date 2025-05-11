@@ -129,7 +129,10 @@ FILE_PATH = './data/sales.csv'
 
 #Messages
 MESSAGES = {
-    'ERR_FILE_CONTENT': 'The file content is corrupted.'
+    'ERR_FILE_CONTENT': 'The file content is corrupted.',
+    'ERR_UPSERT_PRODUCTS': 'There is an error when inserting the products.',
+    'ERR_UPSERT_SALES': 'There is an error when inserting the sales.'
+
 }
 
 def get_random_uuid():
