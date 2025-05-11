@@ -49,7 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'my_app.middleware.APIMiddleware'
+    'my_app.middleware.JsonRequestLogMiddleware'
 ]
 
 ROOT_URLCONF = 'my_app.urls'
@@ -124,6 +124,41 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'json': {
+            '()': 'logging.Formatter',
+            'format': '%(message)s',  # Our middleware already formats as JSON
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'json',
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'request.log',
+            'formatter': 'json',
+        },
+    },
+    'loggers': {
+        'my_app.middleware': {  # Adjust to the location of your middleware
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        # Root logger (optional, for other logs)
+        '': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+        },
+    },
+}
 #my constants
 FILE_PATH = './data/sales.csv'
 

@@ -2,3 +2,4 @@
 *.sqlite3
 *.pyc
 my_app/migrations/*.*
+*.log
