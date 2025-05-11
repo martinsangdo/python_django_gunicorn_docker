@@ -3,7 +3,7 @@ from django.db.models import UniqueConstraint
 
 #Store sale info (dismissed fields that are not in requirements)
 class Sale(models.Model):
-    date = models.CharField(max_length=12) #same as in file DD/MM/YYYY
+    date = models.DateField() #same as in file DD/MM/YYYY
     order_id = models.IntegerField()      #Sale ID in the file (could be duplicated)
     product_id = models.IntegerField()  #Link to the table Product
     amount_sgd = models.FloatField()    #Total Paid w/ Payment Method
@@ -17,4 +17,4 @@ class Sale(models.Model):
     #     ]
 
     def __str__(self):
-        return self.name
+        return str(self.date)

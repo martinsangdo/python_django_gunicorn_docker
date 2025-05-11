@@ -5,6 +5,7 @@ from my_app.models.sale import Sale
 from .. import settings
 from . import product_service
 from django.db import transaction
+from django.db.models import Sum, Avg
 
 class SaleService:
     def read_csv(self):
@@ -20,7 +21,7 @@ class SaleService:
         for index, row in df.iterrows():
             #1. create list of Sales (NOT save to DB yet)
             sale = Sale(
-                    date = row['Sale Date'],   #original date
+                    date = row['date_yyyymmdd'],   #converted date
                     order_id = row['Sale ID'],
                     product_id = row['product_id'],
                     amount_sgd = row['Total Paid w/ Payment Method']
@@ -97,3 +98,27 @@ class SaleService:
             return {'error': settings.MESSAGES['ERR_UPSERT_SALES']}
         #return number of rows
         return {"imported_rows": result_insert_sales['total']}
+    #========== Get data from file & update into db
+    def overall_metrics(self, start_date, end_date):
+        sales_in_range = Sale.objects.filter(date__range=(start_date, end_date)).order_by('date')
+        total_revenue_sgd = 0
+        average_order_value_sgd = 0
+        order_sale_map = {}  #key: order id, value: total amount sgd
+        for sale in sales_in_range:
+            total_revenue_sgd += sale.amount_sgd
+            if sale.order_id in order_sale_map:
+                order_revenue = order_sale_map[sale.order_id]
+                order_revenue += sale.amount_sgd
+                order_sale_map[sale.order_id] = order_revenue
+            else:
+                order_sale_map[sale.order_id] = sale.amount_sgd
+        #
+        if len(sales_in_range) > 0:
+            total_orders = len(order_sale_map)
+            average_order_value_sgd = total_revenue_sgd / total_orders
+        #
+        response_data = {
+                "total_revenue_sgd": total_revenue_sgd,
+                "average_order_value_sgd": average_order_value_sgd,
+        }
+        return response_data

@@ -25,5 +25,7 @@ urlpatterns = [
     path('', main_controller.default, name=''),
     path('health/', main_controller.health_check, name='health_check'),
     #
-    path('api/import-sales', sale_controller.import_sales)
+    path('api/import-sales', sale_controller.import_sales),
+    path('api/metrics/revenue', sale_controller.overall_metrics, name='overall_metrics'),
+
 ]

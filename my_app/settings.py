@@ -131,7 +131,10 @@ FILE_PATH = './data/sales.csv'
 MESSAGES = {
     'ERR_FILE_CONTENT': 'The file content is corrupted.',
     'ERR_UPSERT_PRODUCTS': 'There is an error when inserting the products.',
-    'ERR_UPSERT_SALES': 'There is an error when inserting the sales.'
+    'ERR_UPSERT_SALES': 'There is an error when inserting the sales.',
+    'ERR_MISSING_DATES': 'Please specify start or end dates',
+    'ERR_INVALID_DATES': 'Invalid date format. Please use YYYY-MM-DD.',
+    'ERR_INVALID_RANGE_DATES': 'Start date cannot be after end date.'
 
 }
 
