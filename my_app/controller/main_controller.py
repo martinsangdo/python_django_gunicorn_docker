@@ -17,3 +17,9 @@ def health_check(request):
 
     health_data["database"] = database_status
     return JsonResponse(health_data)
+#homepage
+def default(request):
+    return JsonResponse({'message': 'Hi'})
+
+def custom_404(request, exception):
+    return JsonResponse({'error': 'Not Found', 'message': 'The requested API endpoint does not exist.'}, status=404)

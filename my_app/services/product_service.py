@@ -5,68 +5,40 @@ import logging
 class ProductService:
     #store new products by batch
     @staticmethod
-    def batch_upsert_products(products_data):
-        products_to_create = []
+    def batch_upsert_products(param_product_list):
         existing_products_names = []
         failed_products_data = []
-
-        for product_data in products_data:
-            existing_products_names.append(product_data['name'])
-            try:
-                # Create Product instances.  Important:  Do NOT save them yet.
-                product = Product(
-                    product_id=
-                    name=product_data['name'],
-                    description=product_data['description'],
-                    price=product_data['price'],
-                    # Add other fields as necessary
+        #1. create list of Products (NOT save to DB yet)
+        products_to_create = []
+        for product in param_product_list:
+            product = Product(
+                    name=product['name'],
+                    product_id=product['product_id']
                 )
-                products_to_create.append(product)
-            except ValueError as e:
-                logger.error(f"Invalid data for product: {product_data}. Error: {e}")
-                failed_products_data.append(product_data)  # Collect failed data
-                products_to_create = [p for p in products_to_create if p.name != product_data['name']] # remove the invalid product.
-        #begin saving to db
+            products_to_create.append(product)
+        #get all products from db to compare
+        db_products = list(Product.objects.all())
+        print(len(db_products))
         try:
             with transaction.atomic():
-                # Get existing products
-                existing_products = list(Product.objects.filter(name__in=existing_products_names))
-                existing_product_name_set = set()
-                for existing_product in existing_products:
-                    existing_product_name_set.add(existing_product.name)
-
-                # Filter out existing products
-                products_to_create = [product for product in products_to_create if product.name not in existing_product_name_set]
-
-                # Bulk Create
-                if products_to_create:
-                    Product.objects.bulk_create(
+                Product.objects.bulk_create(
                         products_to_create,
-                        update_conflicts=True,  # Key to enabling upsert
+                        update_conflicts=True,  # Key to enabling upsert (Do not create new record)
                         unique_fields=['name'],  # Specify the unique field(s)
-                        update_fields=['description', 'price'],  # Fields to update if a conflict occurs
+                        update_fields=['product_id']
                     )
-                logger.info(f"Successfully upserted {len(products_data)} products.")
-                failed_products = []
-                for failed_product_data in failed_products_data:
-                    failed_product = Product(
-                        name=failed_product_data['name'],
-                        description=failed_product_data['description'],
-                        price=failed_product_data['price'],
-                    )
-                    failed_products.append(failed_product)
-                return failed_products
-        except IntegrityError as e:
-            logger.error(f"IntegrityError during batch upsert: {e}")
-            # Handle the error appropriately (e.g., log, raise, or return an error)
-            return []
         except Exception as e:
-            logger.error(f"Unexpected error during batch upsert: {e}")
-            return []
-
+            print(e)
+            print(f"Failed upsert {len(param_product_list)} products. Transaction rolled back.")
+        else:
+            print(f"Successfully upsert {len(param_product_list)} products.")
+        return len(param_product_list)
+    #========== clear all data (only for testing)
     @staticmethod
-    def get_product_by_id(product_id):
+    def clear_all():
         try:
-            return Product.objects.get(pk=product_id)
-        except Product.DoesNotExist:
-            return None
+            deleted_count, _ = Product.objects.all().delete()
+            return deleted_count
+        except Exception as e:
+            print(f"Error deleting data from {Product.__name__}: {e}")
+            return 0

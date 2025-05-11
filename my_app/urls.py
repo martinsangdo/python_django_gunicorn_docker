@@ -16,10 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .controller import main_controller
+from .controller import main_controller, sale_controller
+
+handler404 = main_controller.custom_404
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path('health/', main_controller.health_check, name='health_check')
-
+    path('', main_controller.default, name=''),
+    path('health/', main_controller.health_check, name='health_check'),
+    #
+    path('api/import-sales', sale_controller.import_sales)
 ]
