@@ -27,5 +27,6 @@ urlpatterns = [
     #
     path('api/import-sales', sale_controller.import_sales),
     path('api/metrics/revenue', sale_controller.overall_metrics, name='overall_metrics'),
+    path('api/metrics/revenue/daily', sale_controller.daily_metrics, name='daily_metrics'),
 
 ]

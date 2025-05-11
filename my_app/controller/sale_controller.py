@@ -19,28 +19,47 @@ def is_valid_date_format(date_string, format):
             return True
         except ValueError:
             return False
-        
-@require_GET
-def overall_metrics(request):
-    start_date_str = request.GET.get('start')
-    end_date_str = request.GET.get('end')
+
+def validate_start_end_date(start_date_str, end_date_str):
+    start_date = None
+    end_date = None
     if not start_date_str or not end_date_str:
         #missing params
-        return JsonResponse({'error': settings.MESSAGES['ERR_MISSING_DATES']}, status = 400)
+        return settings.MESSAGES['ERR_MISSING_DATES'], start_date, end_date
 
     if not is_valid_date_format(start_date_str, '%Y-%m-%d'):
-        return JsonResponse({'error': settings.MESSAGES['ERR_INVALID_DATES']}, status = 400)
+        return settings.MESSAGES['ERR_INVALID_DATES'], start_date, end_date
 
     if not is_valid_date_format(end_date_str, '%Y-%m-%d'):
-        return JsonResponse({'error': settings.MESSAGES['ERR_INVALID_DATES']}, status = 400)
+        return settings.MESSAGES['ERR_INVALID_DATES'], start_date, end_date
 
     start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
     end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
     if start_date > end_date:
-        return JsonResponse({'error': settings.MESSAGES['ERR_INVALID_RANGE_DATES']}, status = 400)
+        return settings.MESSAGES['ERR_INVALID_RANGE_DATES'], start_date, end_date
     
+    return '', start_date, end_date
+
+@require_GET
+def overall_metrics(request):
+    error, start_date, end_date = validate_start_end_date(request.GET.get('start'), request.GET.get('end'))
+    if error != '':
+        return JsonResponse({'error': error}, status=400)
+
     sale_service_instance = sale_service.SaleService()
     response = sale_service_instance.overall_metrics(start_date, end_date)
     if 'error' in response:
         return JsonResponse(response, status = 400)
     return JsonResponse(response, status=200)
+
+@require_GET
+def daily_metrics(request):
+    error, start_date, end_date = validate_start_end_date(request.GET.get('start'), request.GET.get('end'))
+    if error != '':
+        return JsonResponse({'error': error}, status=400)
+
+    sale_service_instance = sale_service.SaleService()
+    response = sale_service_instance.daily_metrics(start_date, end_date)
+    if 'error' in response:
+        return JsonResponse(response, status = 400)
+    return JsonResponse(response, safe=False, status=200)

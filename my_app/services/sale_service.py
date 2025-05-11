@@ -98,7 +98,7 @@ class SaleService:
             return {'error': settings.MESSAGES['ERR_UPSERT_SALES']}
         #return number of rows
         return {"imported_rows": result_insert_sales['total']}
-    #========== Get data from file & update into db
+    #========== Get metrics in date range
     def overall_metrics(self, start_date, end_date):
         sales_in_range = Sale.objects.filter(date__range=(start_date, end_date)).order_by('date')
         total_revenue_sgd = 0
@@ -119,6 +119,27 @@ class SaleService:
         #
         response_data = {
                 "total_revenue_sgd": total_revenue_sgd,
-                "average_order_value_sgd": average_order_value_sgd,
+                "average_order_value_sgd": average_order_value_sgd  #avg revenue of each order(sale)
         }
         return response_data
+    #========== Get daily metrics
+    def daily_metrics(self, start_date, end_date):
+        sales_in_range = Sale.objects.filter(date__range=(start_date, end_date)).order_by('date')
+        average_order_value_sgd = 0
+        order_sale_map = {}  #key: date, value: total amount sgd
+        for sale in sales_in_range:
+            str_date = str(sale.date)
+            if str_date in order_sale_map:
+                order_revenue = order_sale_map[str_date]
+                order_revenue += sale.amount_sgd
+                order_sale_map[str_date] = order_revenue
+            else:
+                order_sale_map[str_date] = sale.amount_sgd
+        #
+        results = []
+        for item in order_sale_map:
+            results.append({
+                'date': item,
+                'revenue_sgd': order_sale_map[item]
+            })
+        return results
