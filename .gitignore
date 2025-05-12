@@ -3,3 +3,4 @@
 *.pyc
 my_app/migrations/*.*
 *.log
+staticfiles/*

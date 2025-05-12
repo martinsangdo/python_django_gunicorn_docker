@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import uuid
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -79,7 +80,7 @@ WSGI_APPLICATION = 'my_app.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / 'my_app/db.sqlite3',
     }
 }
 
@@ -119,6 +120,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') #python manage.py collectstatic
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -139,32 +141,32 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'json',
         },
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.FileHandler',
-            'filename': 'request.log',
-            'formatter': 'json',
-        },
+        # 'file': {
+        #     'level': 'INFO',
+        #     'class': 'logging.FileHandler',
+        #     'filename': 'request.log',
+        #     'formatter': 'json',
+        # },
     },
     'loggers': {
         'my_app.middleware': {  # Adjust to the location of your middleware
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': False,
         },
         # Root logger (optional, for other logs)
         '': {
-            'handlers': ['console', 'file'],
+            'handlers': ['console'],
             'level': 'INFO',
         },
     },
 }
 #my constants
-FILE_PATH = './data/sales.csv'
+FILE_PATH = './my_app/sales.csv'
 
 #Messages
 MESSAGES = {
-    'ERR_FILE_CONTENT': 'The file content is corrupted.',
+    'ERR_FILE_CONTENT': 'The file content is corrupted or missed.',
     'ERR_UPSERT_PRODUCTS': 'There is an error when inserting the products.',
     'ERR_UPSERT_SALES': 'There is an error when inserting the sales.',
     'ERR_MISSING_DATES': 'Please specify start or end dates',
