@@ -44,6 +44,7 @@ class SaleService:
             print(f"Successfully upsert sales.")
             return {'total': len(sales_2_store)}
     #========== Summarize the daily revenue
+    #TODO optimize query
     def summarize_daily_revenue(self, df):
         try:
             # Group the DataFrame by 'date_yyyymmdd' and calculate the sum of 'Item Total' and the count of rows
