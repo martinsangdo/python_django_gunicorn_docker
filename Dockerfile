@@ -29,7 +29,7 @@
     RUN python manage.py migrate --no-input
     
     # Collect static files
-    RUN python manage.py collectstatic --no-input
+    #RUN python manage.py collectstatic --no-input
     
     # --- Final Stage: Gunicorn server ---
     FROM python:3.11-slim-buster AS final
@@ -42,7 +42,7 @@
     USER nonroot
 
     # Copy only the necessary artifacts from the previous stages
-    COPY --from=migrator /app/static /app/static --chown=nonroot:nonroot
+    #COPY --from=migrator /app/static /app/static --chown=nonroot:nonroot
 
     COPY --from=migrator /app/my_app/sales.csv /app/my_app/sales.csv --chown=nonroot:nonroot
 
