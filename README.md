@@ -1,4 +1,11 @@
 # An application under the web framework Django + Gunicorn + Docker
+1. Build and run the project:<br/>
+    `` python manage.py makemigrations `` <br/>
+   `` python manage.py migrate `` <br/>
+   `` python manage.py runserver `` <br/>
+   Then the project will run at the default address: `` http://127.0.0.1:8000 ``<br/>
+   Call other APIs as per requirements.
+# Documentation
 1. High-Level Architecture Diagram<br/>
      * .github/workflows/ci.yml (Contain list of commands once we have new 
      * my_app/
