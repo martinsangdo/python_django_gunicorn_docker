@@ -79,14 +79,14 @@ WSGI_APPLICATION = 'my_app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        # 'ENGINE': 'django.db.backends.postgresql',
-        # 'NAME': 'defaultdb',
-        # 'USER': 'xxx',
-        # 'PASSWORD': 'xxx',
-        # 'HOST': 'xxx',
-        # 'PORT': '16966'
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'NAME': 'zinc_test_db',
+        'ENFORCE_SCHEMA': False,
+        'CLIENT': {
+            'host': 'mongodb://localhost:27017/zinc_test_db?retryWrites=true&w=majority'
+        }
     }
 }
 
