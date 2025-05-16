@@ -4,8 +4,8 @@ import pandas as pd
 from my_app.models.sale import Sale
 from .. import settings
 from . import product_service
-from django.db import transaction
-from django.db.models import Sum, Avg
+# from django.db import transaction
+# from django.db.models import Sum, Avg
 
 class SaleService:
     def read_csv(self):
@@ -28,7 +28,7 @@ class SaleService:
                 )
             sales_2_store.append(sale)
         try:
-            with transaction.atomic():
+            # with transaction.atomic():
                 #insert all
                 Sale.objects.bulk_create(
                         sales_2_store,

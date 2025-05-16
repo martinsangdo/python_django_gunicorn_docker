@@ -1,5 +1,5 @@
 from my_app.models.product import Product
-from django.db import transaction
+# from django.db import transaction
 import logging
 
 class ProductService:
@@ -14,7 +14,7 @@ class ProductService:
                 )
             products_to_create.append(product)
         try:
-            with transaction.atomic():
+            # with transaction.atomic():
                 Product.objects.bulk_create(
                         products_to_create,
                         update_conflicts=True,  # Key to enabling upsert (Do not create new record)

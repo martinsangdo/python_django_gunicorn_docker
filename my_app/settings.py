@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import uuid
 import os
+import mongoengine
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,7 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'my_app'
+    'my_app',
+    # "django_mongoengine",
+    # "django_mongoengine.mongo_auth",
+    # "django_mongoengine.mongo_admin",
 ]
 
 MIDDLEWARE = [
@@ -73,22 +77,44 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'my_app.wsgi.application'
 
+# MONGODB_DATABASES = {
+#     'default': {
+#         'host': 'mongodb://localhost:27017/',
+#         'db': 'zinc_db'
+#     }
+# }
+
+# AUTH_USER_MODEL = "mongo_auth.MongoUser"
+
+# AUTHENTICATION_BACKENDS = ("django_mongoengine.mongo_auth.backends.MongoEngineBackend",)
+
+# SESSION_ENGINE = "django_mongoengine.sessions"
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         # 'ENGINE': 'django.db.backends.sqlite3',
+#         # 'NAME': BASE_DIR / 'db.sqlite3',
+#         'ENGINE': 'django.db.backends.dummy'
+#     }
+# }
+# DATABASES = {"default": {"ENGINE": "django.db.backends.dummy"}}
+from django_mongodb_backend import parse_uri
+
 DATABASES = {
-    'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
-        'ENGINE': 'djongo',
-        'NAME': 'zinc_test_db',
-        'ENFORCE_SCHEMA': False,
-        'CLIENT': {
-            'host': 'mongodb://localhost:27017/zinc_test_db?retryWrites=true&w=majority'
-        }
-    }
+    "default": parse_uri(
+        "mongodb://localhost:27017", db_name="example"
+    ),
 }
+
+# import mongoengine
+# mongoengine.connect(db='zinc_db', host='mongodb://localhost:27017')
+
+# import mongoengine
+# MONGO_DATABASE_HOST = 'mongodb://localhost:27017'
+# mongoengine.connect('zinc_db', host=MONGO_DATABASE_HOST)
 
 
 # Password validation
@@ -131,7 +157,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') #python manage.py collectsta
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGGING = {
     'version': 1,
