@@ -86,6 +86,8 @@ class SaleService:
         product_map = result_products['product_name_map']
         #create new product_id column
         df['product_id'] = df['Item name'].map(product_map)
+        #df.drop(df[df['Sale ID'] != 0].index, inplace=True)
+        #df[df['Sale ID'] == x].copy()
         # daily_summary = self.summarize_daily_revenue(df)
         # print(daily_summary)
         #TODO 1: Sale ID 4126 has 2 same product names with different quantity
