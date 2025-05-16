@@ -1,4 +1,67 @@
 # An application under the web framework Django + Gunicorn + Docker
+1. Build and run the project:<br/>
+    ``$python manage.py makemigrations `` <br/>
+   ``$python manage.py migrate `` <br/>
+   ``$python manage.py runserver `` <br/>
+   Then the project will run at the default address: `` http://127.0.0.1:8000 ``<br/><br/>
+
+   Call other APIs as per requirements.<br/><br/>
+    1a) Import CSV file (The file "sales.csv" is in the folder "/my_app"):<br/>
+        ``
+        curl --location 'http://127.0.0.1:8000/api/import-sales'
+       ``
+       <br/>
+       **Response:**
+       
+        {
+            "imported_rows": 1662    #we skipped duplicated rows in the file
+        }
+   
+    1b) Get overall metric:<br/>
+        ``curl --location 'http://127.0.0.1:8000/api/metrics/revenue/daily?start=2025-3-5&end=2025-03-9' ``
+       <br/>
+        **Response:**
+
+        {
+            "total_revenue_sgd": 2206.2680000000005,
+            "average_order_value_sgd": 31.518114285714294
+        }
+       
+    1c) Get daily metric: <br/>
+        ``curl --location 'http://127.0.0.1:8000/api/metrics/revenue/daily?start=2025-3-5&end=2025-03-9'``
+        <br/>
+        **Response:**
+           
+        [
+            {
+                "date": "2025-03-05",
+                "revenue_sgd": 408.096
+            },
+            {
+                "date": "2025-03-06",
+                "revenue_sgd": 985.7960000000003
+            }
+       ]
+   
+    1d) Check service status:
+        ``curl --location 'http://127.0.0.1:8000/health'``
+       <br/>
+       **Response:**
+   
+       {
+            "status": "ok",
+            "database": "reachable"
+       }
+2. Run test:<br/>
+    ``python manage.py test``
+   
+3. Docker build:<br/>
+    ``docker build --no-cache -t python_django_gunicorn_docker .``<br/>
+    ``docker run -p 8000:8000 python_django_gunicorn_docker``<br/>
+    
+
+    
+# Documentation
 1. High-Level Architecture Diagram<br/>
      * .github/workflows/ci.yml (Contain list of commands once we have new 
      * my_app/
